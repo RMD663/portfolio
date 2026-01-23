@@ -1,0 +1,222 @@
+// Função para inicializar o portfólio
+function initializePortfolio() {
+    loadPersonalInfo();
+    loadProjects();
+    setupEventListeners();
+    setupCarousel();
+}
+
+// Carregar informações pessoais
+function loadPersonalInfo() {
+    const data = portfolioData.personalInfo;
+    const social = portfolioData.socialLinks;
+    
+    // Header
+    document.getElementById('header-name').textContent = data.name;
+    document.getElementById('header-title').textContent = data.title;
+    
+    // Hero section
+    document.getElementById('hero-greeting').innerHTML = data.greeting;
+    document.getElementById('profile-image').src = data.profileImage;
+    document.getElementById('profile-image').alt = `Foto de ${data.name}`;
+    
+    const heroDesc = document.getElementById('hero-description');
+    heroDesc.innerHTML = '';
+    data.description.forEach(paragraph => {
+        const p = document.createElement('p');
+        p.textContent = paragraph;
+        heroDesc.appendChild(p);
+    });
+    
+    // About section
+    const aboutContent = document.getElementById('about-content');
+    aboutContent.innerHTML = '';
+    data.about.forEach(paragraph => {
+        const p = document.createElement('p');
+        p.textContent = paragraph;
+        aboutContent.appendChild(p);
+    });
+    
+    // Social links
+    document.getElementById('linkedin-link').href = social.linkedin;
+    document.getElementById('github-link').href = social.github;
+    document.getElementById('itch-link').href = social.itch;
+    document.getElementById('resume-btn').href = social.resume;
+    
+    document.getElementById('footer-linkedin').href = social.linkedin;
+    document.getElementById('footer-github').href = social.github;
+    document.getElementById('footer-itch').href = social.itch;
+    document.getElementById('footer-resume').href = social.resume;
+    
+    // Footer
+    document.getElementById('footer-copyright').textContent = `${portfolioData.settings.currentYear} ${data.name}`;
+    document.getElementById('footer-subtitle').textContent = "Gameplay Programmer & Systems Programmer";
+}
+
+// Carregar projetos
+function loadProjects() {
+    const projectsContainer = document.getElementById('projects-container');
+    const indicatorsContainer = document.getElementById('carousel-indicators');
+    
+    projectsContainer.innerHTML = '';
+    indicatorsContainer.innerHTML = '';
+    
+    portfolioData.projects.forEach((project, index) => {
+        // Criar card do projeto
+        const projectCard = document.createElement('div');
+        projectCard.className = 'project-card';
+        projectCard.setAttribute('data-project-id', project.id);
+        
+        projectCard.innerHTML = `
+            <div class="project-gif-container">
+                <img src="${project.gif}" alt="${project.title}" class="project-gif">
+            </div>
+            <div class="project-info">
+                <div class="project-tech">
+                    <span>${project.tech}</span>
+                    <div class="project-duration">
+                        <i class="far fa-calendar-alt"></i>
+                        <span>${project.duration}</span>
+                    </div>
+                </div>
+                <h3 class="project-title">${project.title}</h3>
+                <p class="project-description">${project.description}</p>
+            </div>
+        `;
+        
+        // Adicionar evento de clique
+        projectCard.addEventListener('click', () => {
+            if (project.articleUrl) {
+                window.open(project.articleUrl, '_blank');
+            }
+        });
+        
+        projectsContainer.appendChild(projectCard);
+        
+        // Criar indicador do carrossel
+        const indicator = document.createElement('div');
+        indicator.className = `indicator ${index === 0 ? 'active' : ''}`;
+        indicator.setAttribute('data-index', index);
+        indicatorsContainer.appendChild(indicator);
+    });
+}
+
+// Configurar carrossel
+function setupCarousel() {
+    const carouselContainer = document.querySelector('.carousel-container');
+    const projectCards = document.querySelectorAll('.project-card');
+    const prevBtn = document.querySelector('.carousel-btn.prev');
+    const nextBtn = document.querySelector('.carousel-btn.next');
+    const indicators = document.querySelectorAll('.indicator');
+    
+    if (!portfolioData.settings.enableCarousel || projectCards.length === 0) {
+        // Se o carrossel estiver desativado, mostrar todos os projetos em grade
+        carouselContainer.style.flexWrap = 'wrap';
+        carouselContainer.style.justifyContent = 'center';
+        carouselContainer.style.transform = 'none';
+        document.querySelector('.carousel-btn.prev').style.display = 'none';
+        document.querySelector('.carousel-btn.next').style.display = 'none';
+        document.querySelector('.carousel-indicators').style.display = 'none';
+        return;
+    }
+    
+    let currentIndex = 0;
+    const cardCount = projectCards.length;
+    
+    // Calcular quantos cards mostrar por vez baseado na largura da tela
+    function getCardsPerView() {
+        if (window.innerWidth <= 768) return 1;
+        if (window.innerWidth <= 992) return 2;
+        return 3;
+    }
+    
+    // Atualizar a posição do carrossel
+    function updateCarousel() {
+        const cardsPerView = getCardsPerView();
+        const cardWidth = projectCards[0].offsetWidth + 30; // Inclui gap
+        const translateX = -currentIndex * cardWidth;
+        carouselContainer.style.transform = `translateX(${translateX}px)`;
+        
+        // Atualizar indicadores
+        indicators.forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === currentIndex);
+        });
+    }
+    
+    // Evento para o botão próximo
+    nextBtn.addEventListener('click', function() {
+        const cardsPerView = getCardsPerView();
+        currentIndex = (currentIndex + 1) % (cardCount - cardsPerView + 1);
+        updateCarousel();
+    });
+    
+    // Evento para o botão anterior
+    prevBtn.addEventListener('click', function() {
+        const cardsPerView = getCardsPerView();
+        currentIndex = (currentIndex - 1 + (cardCount - cardsPerView + 1)) % (cardCount - cardsPerView + 1);
+        updateCarousel();
+    });
+    
+    // Eventos para os indicadores
+    indicators.forEach(indicator => {
+        indicator.addEventListener('click', function() {
+            currentIndex = parseInt(this.getAttribute('data-index'));
+            updateCarousel();
+        });
+    });
+    
+    // Atualizar carrossel ao redimensionar a janela
+    window.addEventListener('resize', updateCarousel);
+    
+    // Inicializar o carrossel
+    updateCarousel();
+    
+    // Efeito de hover nos cards (dessaturação/saturação)
+    projectCards.forEach(card => {
+        const gif = card.querySelector('.project-gif');
+        
+        card.addEventListener('mouseenter', function() {
+            gif.style.transition = 'filter 0.5s ease';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            gif.style.transition = 'filter 0.5s ease';
+        });
+    });
+}
+
+// Configurar event listeners
+function setupEventListeners() {
+    // Simular clique no currículo
+    document.querySelectorAll('.resume-btn, #footer-resume').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.open(portfolioData.socialLinks.resume, '_blank');
+        });
+    });
+    
+    // Prevenir comportamento padrão dos links sociais (exceto currículo)
+    document.querySelectorAll('.social-links a:not(.resume-btn), .footer-social a:not(#footer-resume)').forEach(link => {
+        link.addEventListener('click', function(e) {
+            // Em um site real, os links já estão configurados para abrir as páginas corretas
+            // Esta função só está aqui para evitar que a página recarregue se os links forem "#"
+            if (this.getAttribute('href') === '#') {
+                e.preventDefault();
+                const platform = this.querySelector('i').className.split(' ')[1];
+                let platformName = "";
+                
+                if (platform.includes('linkedin')) platformName = "LinkedIn";
+                else if (platform.includes('github')) platformName = "GitHub";
+                else if (platform.includes('itch-io')) platformName = "Itch.io";
+            }
+        });
+    });
+}
+
+// Inicializar quando o DOM estiver carregado
+document.addEventListener('DOMContentLoaded', initializePortfolio);
+
+// Suporte para exportação de módulos (se necessário)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { portfolioData, initializePortfolio };
+}
