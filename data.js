@@ -1,4 +1,3 @@
-// Dados do Portfólio - Edite aqui para personalizar
 const portfolioData = {
     // Informações pessoais
     personalInfo: {
@@ -40,6 +39,15 @@ const portfolioData = {
         },
         {
             id: 2,
+            title: "Level Forever",
+            description: "2D Platformer developed for a Fiverr commission featuring collection mechanics, a simple checkpoint system, and diegetic UI.",
+            tech: "Godot", 
+            duration: "1 Week",
+            gif: "assets/level-forever/level-forever-01.gif",
+            articleUrl: "articles/level-forever-article.html"
+        },
+        {
+            id: 3,
             title: "Child Of Warana",
             description: "Precision 2D platformer with time-travel resets.",
             tech: "Godot", 
@@ -48,7 +56,7 @@ const portfolioData = {
             articleUrl: "articles/child-article.html"
         },
         {
-            id: 2,
+            id: 4,
             title: "Orbit Simulator",
             description: "Interactive 2D gravity simulator in p5.js. Add bodies with mass, velocity, and color to watch realistic orbits",
             tech: "Web", 
