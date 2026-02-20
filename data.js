@@ -40,7 +40,7 @@ const portfolioData = {
         {
             id: 2,
             title: "Level Forever",
-            description: "2D Platformer developed for a Fiverr commission featuring collection mechanics, a simple checkpoint system, and diegetic UI.",
+            description: "Commissioned 2D platformer for Mobile and PC, implementing event-based UI and decoupled gameplay systems for easy scalability.",
             tech: "Godot", 
             duration: "1 Week",
             gif: "assets/level-forever/level-forever-01.gif",

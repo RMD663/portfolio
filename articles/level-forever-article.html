@@ -467,6 +467,12 @@
                 <div class="media-item">
                     <img src="/portfolio/assets/level-forever/level-forever-01.gif" alt="Level Forever Gameplay">
                 </div>
+                   <div class="media-item">
+                    <img src="/portfolio/assets/level-forever/level-forever-03.jpg" alt="Level Forever Gameplay">
+                </div>
+                   <div class="media-item">
+                    <img src="/portfolio/assets/level-forever/level-forever-04.jpg" alt="Level Forever Gameplay">
+                </div>
             </div>
         </div>
     </section>
@@ -541,6 +547,15 @@ func _connect_signals() -> void:
     SignalBus.heart_picked.connect(_increase_value)
     SignalBus.fade_in.connect(_fade_in)
     SignalBus.fade_out.connect(_fade_out)
+
+func _increase_value() -> void:
+	var new_size: float = fill.scale.x + 0.2
+	hearts_collected += 1
+	
+	_apply_fill_update(new_size)
+	
+	if hearts_collected >= total_hearts:
+		_handle_all_hearts_collected()
                 </code></pre>
                 
                 hitbox.gd
