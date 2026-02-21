@@ -110,7 +110,6 @@ function setupCarousel() {
     const indicators = document.querySelectorAll('.indicator');
     
     if (!portfolioData.settings.enableCarousel || projectCards.length === 0) {
-        // Se o carrossel estiver desativado, mostrar todos os projetos em grade
         carouselContainer.style.flexWrap = 'wrap';
         carouselContainer.style.justifyContent = 'center';
         carouselContainer.style.transform = 'none';
@@ -122,41 +121,68 @@ function setupCarousel() {
     
     let currentIndex = 0;
     const cardCount = projectCards.length;
-    
-    // Calcular quantos cards mostrar por vez baseado na largura da tela
+
+    let startX = 0;
+    let endX = 0;
+    let isDragging = false;
+
+    carouselContainer.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        isDragging = true;
+    }, { passive: true });
+
+    carouselContainer.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        endX = e.touches[0].clientX;
+    }, { passive: true });
+
+    carouselContainer.addEventListener('touchend', () => {
+        if (!isDragging) return;
+        const threshold = 50;
+        const diff = startX - endX;
+
+        if (Math.abs(diff) > threshold) {
+            if (diff > 0) {
+
+                moveNext();
+            } else {
+            
+                movePrev();
+            }
+        }
+        isDragging = false;
+    });
+
     function getCardsPerView() {
         if (window.innerWidth <= 768) return 1;
         if (window.innerWidth <= 992) return 2;
         return 3;
     }
     
-    // Atualizar a posição do carrossel
     function updateCarousel() {
-        const cardWidth = projectCards[0].offsetWidth + 30;
+        const gap = 30; 
+        const cardWidth = projectCards[0].offsetWidth + gap;
         const translateX = -currentIndex * cardWidth;
         carouselContainer.style.transform = `translateX(${translateX}px)`;
         
-
         indicators.forEach((indicator, index) => {
             indicator.classList.toggle('active', index === currentIndex);
         });
     }
-    
-    // Evento para o botão próximo
-    nextBtn.addEventListener('click', function() {
-        const cardsPerView = getCardsPerView();
+
+    function moveNext() {
         currentIndex = (currentIndex + 1) % cardCount;
         updateCarousel();
-    });
-    
-    // Evento para o botão anterior
-    prevBtn.addEventListener('click', function() {
-        const cardsPerView = getCardsPerView();
+    }
+
+    function movePrev() {
         currentIndex = (currentIndex - 1 + cardCount) % cardCount;
         updateCarousel();
-    });
+    }
     
-    // Eventos para os indicadores
+    nextBtn.addEventListener('click', moveNext);
+    prevBtn.addEventListener('click', movePrev);
+    
     indicators.forEach(indicator => {
         indicator.addEventListener('click', function() {
             currentIndex = parseInt(this.getAttribute('data-index'));
@@ -164,24 +190,8 @@ function setupCarousel() {
         });
     });
     
-    // Atualizar carrossel ao redimensionar a janela
     window.addEventListener('resize', updateCarousel);
-    
-
     updateCarousel();
-    
-
-    projectCards.forEach(card => {
-        const gif = card.querySelector('.project-gif');
-        
-        card.addEventListener('mouseenter', function() {
-            gif.style.transition = 'filter 0.5s ease';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            gif.style.transition = 'filter 0.5s ease';
-        });
-    });
 }
 
 // Configurar event listeners
