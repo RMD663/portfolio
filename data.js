@@ -23,7 +23,7 @@ const portfolioData = {
         linkedin: "https://www.linkedin.com/in/ryan-damasceno-823285288/",
         github: "https://github.com/RMD663",
         itch: "https://caixita.itch.io/",
-        resume: "https://drive.google.com/file/d/seu-curriculo/view"
+        resume: "https://projetoeextensionista.my.canva.site/resume"
     },
     
     // Projetos
