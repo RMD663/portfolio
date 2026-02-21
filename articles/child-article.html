@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slime Dungeon</title>
+    <title>Level Forever</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <style>
@@ -416,7 +416,7 @@
     <header>
         <div class="container header-content">
             <div class="logo">
-                <a href="/index.html">
+                <a href="/portfolio/index.html">
                     <h1>Ryan Mesquita</h1>
                     <p>Gameplay Programmer</p>
                 </a>
@@ -425,7 +425,7 @@
                 <a href="https://www.linkedin.com/in/ryan-damasceno-823285288/" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
                 <a href="https://github.com/RMD663" title="GitHub"><i class="fab fa-github"></i></a>
                 <a href="https://caixita.itch.io/" title="Itch.io"><i class="fab fa-itch-io"></i></a>
-                <a href="/index.html" class="back-btn">
+                <a href="/portfolio/index.html" class="back-btn">
                     <i class="fas fa-arrow-left"></i>
                     Return
                 </a>
@@ -458,27 +458,20 @@
                     <div class="meta-text">Team</div>
                     <div class="meta-value">1 Person</div>
                 </div>
-                <div class="meta-item">
-                    <div class="meta-icon">
-                        <i class="fas fa-gamepad"></i>
-                    </div>
-                    <div class="meta-text">Genre</div>
-                    <div class="meta-value">Arena</div>
-                </div>
             </div>
             
-            <h1 class="project-title">Slime Dungeon</h1>
-            <p class="project-subtitle">Battle arena game with swarms of enemies on the screen. And stackable power ups.</p>
+            <h1 class="project-title">Child of Warana</h1>
+            <p class="project-subtitle">Sacrifice is the only way up.</p>
             
             <div class="media-gallery">
                 <div class="media-item">
-                    <img src="/assets/slime-dungeon-gameplay.gif" alt="Slime Dungeon Gameplay">
+                    <img src="/portfolio/assets/child-of-warana/child-of-warana-01.gif" alt="Child of Warana Gameplay">
                 </div>
-                <div class="media-item">
-                    <img src="/assets/slime-dungeon/print_1.png" alt="Slime Dungeon Explosion">
+                   <div class="media-item">
+                    <img src="/portfolio/assets/child-of-warana/child-of-warana-02.gif" alt="Child of Warana Print - A">
                 </div>
-                <div class="media-item">
-                    <img src="/assets/slime-dungeon/print_b.png" alt="Slime Dungeon Swarm">
+                   <div class="media-item">
+                    <img src="/portfolio/assets/child-of-warana/child-of-warana-03.jpg" alt="Child of Warana Print - B">
                 </div>
             </div>
         </div>
@@ -491,151 +484,137 @@
         <div class="content-section">
             <h2 class="section-title">About</h2>
             <p class="article-text">
-Slime Dungeon is a 3D battle arena inspired by games such as <em>Vampire Survivors</em>, featuring hundreds of enemies on screen simultaneously. The project was originally developed in just three days for Mini Jam 202.
+              Child of Warana is my first attempt at a game jam, developed in just 3 days. The game's main mechanic is the 'Warana' eating: you can consume a Warana
+              fruit to travel back in time, and a platform is created on the spot where you ate the fruit.
             </p>
         </div>
 
         <div class="content-section">
-            <h2 class="section-title">Main Issue</h2>
+            <h2 class="section-title">The Jam</h2>
 
             <div class="highlight-box">
                 <p class="article-text">
-The jam version suffered from a critical performance issue: it was unable to maintain a stable framerate during the later stages of a run.<br><br>
-The primary cause was the way enemy physics were handled. Each enemy was implemented as a <code>CharacterBody3D</code>, which relies on an internal physics solver and per-frame callbacks. While suitable for small entity counts, this approach introduces a significant processing cost when scaled to hundreds or thousands of instances.
+                During the design of CoW (Child of Warana), there were a handful of ideas of how the game would look
+                and work. The jam theme was 'Dejavu'.
+                </p>
+                <p class="article-text">
+                The first idea with this theme was a mountain climbing game where,
+                after each attempt, you would create a ghost and needed to beat them climbing the mountain first. The
+                second design was a platformer where the player would first go to place the platforms in the mountain, and after
+                that, they would need to climb the entire mountain in one go. 
+                </p>
+                <p class="article-text">
+                The final design that actually entered production was the
+                simplest: the player would have a collectible fruit, and if they ate the fruit, they would go back in time, leaving a platform behind.
                 </p>
             </div>
 
             <p class="article-text">
-As a result, the game required a fundamental rework of how physics updates were processed.
+                The idea was defined, and I started coding the mechanic.
             </p>
         </div>
 
         <div class="content-section">
-            <h2 class="section-title">Constraints</h2>
+            <h2 class="section-title">How I Implemented</h2>
 
             <p class="article-text">
-Because of time constraints the solution needed to improve performance <strong>without</strong> requiring a full rewrite of the existing architecture or the implementation of a custom physics body from scratch.
-            </p>
-
-            <p class="article-text">
-At peak moments, the game could have thousands of active entities, all executing physics updates every frame. This resulted in a severe performance curve, where CPU cost scaled linearly with the number of active enemies, causing major frame drops.
+                To implement the time travel mechanic, I created a not-so-optimal way of doing it.
             </p>
 
             <div class="highlight-box">
                 <p class="article-text">
-To address this, I analyzed some alternatives like time splicing or queuing, i opted for a <strong>staggered physics update system</strong>, distributing enemy physics processing across multiple frames instead of updating all entities simultaneously.
+                    When the event for eating the fruit was triggered, the game would: 
+                    get the player, initialize the animation, get his last checkpoint, delete the fruit from inventory,
+                    play the screen fade animation, show the platform created, play the fade out animation, and, at the end, teleport
+                    the player to the last checkpoint.
                 </p>
             </div>
-        </div>
-
-        <div class="content-section">
-            <h2 class="section-title">The Solution</h2>
-
-            <p class="article-text">
-The main solution was to built on top of the already existing <strong>Entities container</strong>, which was responsible for tracking active entities and handling global game state. Instead of allowing each enemy to process its own physics independently, the container was remade to work as a physics manager.
-            </p>
-
-            <p class="article-text">
-Enemy physics updates were removed from the individual entities and delegated to the container. This made it possible to fully control <em>when</em> and <em>how many</em> enemies would execute physics logic per frame.
-            </p>
-        </div>
-
-        <div class="content-section">
-            <h2 class="section-title">How it Works</h2>
-
-            <p class="article-text">
-All active enemies are stored in a list managed by the Entities container. Rather than processing the entire list every frame, enemies are divided into fixed-size groups.
-            </p>
-
-            <p class="article-text">
-Each frame, only one group is processed. Enemies that are not updated during a given frame temporarily skip their physics update.
-            </p>
-
-            <p class="article-text">
-To compensate for the skipped frames, each processed enemy scales its velocity proportionally to the number of groups, ensuring that total movement over time remains consistent.
-            </p>
-        </div>
-
-        <div class="content-section">
-            <h2 class="section-title">Implementation</h2>
-
-            <p class="article-text">
-The group size is defined upfront, and all active enemies are stored in a centralized list:
-            </p>
-
-<div class="highlight-box">
-<pre><code> ## group vars
-var splice_group_size : int = 50
-var enemies : Array[Enemy] = []
-var _counter : int = 0
-</code></pre>
-            </div>
-
-            <p class="article-text">
-Before processing, the system ensures the list is not empty and calculates how many groups are required. The number of processed entities per frame is clamped to avoid out-of-bounds access.
-            </p>
-
-            <div class="highlight-box">
-<pre><code>func process_enemy_physics() -> void:
-    var total : int = enemies.size()
-    if total <= 0:
-        return
-    var total_groups : float = float(total) / float(splice_group_size)
-    if total_groups < 1.0:
-        total_groups = 1.0
-    var iterations : int = min(splice_group_size, total)</code></pre>
-            </div>
-
-            <p class="article-text">
-Each frame on the container physics process, a group of enemies is processed.
-            </p>
-
-            <div class="highlight-box">
-<pre><code>for i in range(iterations):
-    if _counter >= total:
-        _counter = 0
-    if _counter >= enemies.size():
-        _counter = 0
-        return
-    var enemy : Enemy = enemies[_counter]
-    if is_instance_valid(enemy):
-        var original_velocity : Vector3 = enemy.velocity
-        enemy.velocity *= total_groups
-        enemy.move_and_slide()
-        enemy.velocity = original_velocity
-        _counter += 1
-    else:
-        enemies.remove_at(_counter)</code></pre>
-            </div>
-        </div>
-
-        <div class="content-section">
-            <h2 class="section-title">Trade-offs</h2>
-
-            <p class="article-text">
-This approach drastically improved performance by eliminating large CPU spikes caused by simultaneous physics updates.
-            </p>
-
-            <p class="article-text">
-Because enemies do not update their physics every physics tick, movement is evaluated at a lower temporal resolution. While velocity scaling compensates for skipped updates, intermediate collision checks and physical responses are not evaluated.
-            </p>
-
-            <p class="article-text">
-In practice, this results in:
-            </p>
-
-            <ul class="features-list">
-                <li>Less precise collision responses between enemies</li>
-                <li>Occasional stiffness in enemy movement under dense clustering</li>
-            </ul>
-
             <div class="highlight-box">
                 <p class="article-text">
-For <em>Slime Dungeon</em>, these trade-offs were acceptable. Since the game prioritizes enemy density, visual clarity, and combat readability over per-entity physical accuracy. The staggered update system allowed the game to scale to hundreds of active enemies while preserving the overall feel and responsiveness of game-play. On other types of games this system may show itself as unreliable because of the lower collision accuracy and delay between checks.
+                    Even though this solution solved the main problem, it was absolute spaghetti to work with. The game is fully coupled: the inventory controls the player
+                    and the screen animation, and there are async functions that need tight timing to make things work. It was functional for the jam's purpose, but it was unmaintainable.
+                    If a change was made to the screen fade animation, the timing would break completely. 
                 </p>
+            </div>
+             <div class="media-item">
+                    <img src="/portfolio/assets/child-of-warana/flow-old.jpg" alt="CoW - Old FSM flow">
             </div>
         </div>
 
+        <div class="content-section">
+            <h2 class="section-title">How I would implement now</h2>
+
+            <p class="article-text">
+                If I had to recreate this system in another game or an eventual remake, I would follow another approach. In the original CoW,
+                the system is tightly coupled in a handful of components.
+            </p>
+
+            <p class="article-text">
+                The inventory does not need to know about the player nor the Player's Finite State Machine; this created a lot of problems.
+                Instead, to control the transformation state, I would implement an FSM to manage game states, like start, pause, end... and, of course,
+                transformation.    
+            </p>
+
+            <p class="article-text">
+                Once the game enters the transformation state, the game manager should handle things by itself, like starting the fade out and telling the player object
+                to enter the transform state. 
+            </p>
+
+            <p class="article-text">
+                The flow would be something like:               
+            </p>
+            <div class="highlight-box">
+                <p class="article-text">
+                    1. Player ate the fruit
+                </p>
+                <p class="article-text"> 
+                    2. Emit "fruit eaten" signal
+                </p>
+                <p class="article-text">
+                    3. Game Manager receives the signal and enters 'transform' state
+                </p>
+                <p class="article-text">
+                    4. Emit "transformation started" signal
+                </p>
+                <p class="article-text">
+                    5. Listeners start the animation sequence
+                </p>
+                <p class="article-text">
+                    6. On finishing the transformation, emit "finished" signal
+                </p>
+                <p class="article-text">
+                    7. Game Manager receives the signal and enters 'resume' state
+                </p>
+                <p class="article-text">
+                    8. Game resumes and gives back player control
+                </p>
+            </div>
+        </div>
+         <div class="media-item">
+                    <img src="/portfolio/assets/child-of-warana/flow-new.jpg" alt="CoW - FSM flow">
+                </div>
+        <div class="content-section">
+            <h2 class="section-title">Results</h2>
+            <p class="article-text">
+                In the end, even if the game did not have the best systems and architecture, it was still fun for some people. Because of
+                that, I got 32nd out of 97 submissions on the jam. This means that the game can be fun, but still has some rough edges. 
+            </p>
+            <p class="article-text">
+                With the release of CoW, I learned that good planning is essential for a complex project, especially games.
+                I intend to revisit the game in a future update or even a full remake.
+            </p>
+            <div class="media-gallery">
+                <div class="media-item">
+                    <img src="/portfolio/assets/child-of-warana/child-of-warana-02.gif" alt="CoW Gameplay">
+                </div>
+                <div class="media-item">
+                    <img src="/portfolio/assets/child-of-warana/child-of-warana-03.jpg" alt="CoW print">
+                </div>
+                <div class="media-item">
+                    <img src="/portfolio/assets/child-of-warana/child-of-warana-02.gif" alt="CoW print">
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -645,21 +624,18 @@ For <em>Slime Dungeon</em>, these trade-offs were acceptable. Since the game pri
     <footer>
         <div class="container footer-content">
             <p>2026 Ryan Mesquita.</p>
-            <p>Gameplay Programmer & Systems Developer</p>
+            <p>Gameplay Programmer</p>
             <div class="footer-social">
                 <a href="https://www.linkedin.com/in/ryan-damasceno-823285288/" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
                 <a href="https://github.com/RMD663" title="GitHub"><i class="fab fa-github"></i></a>
                 <a href="https://caixita.itch.io/" title="Itch.io"><i class="fab fa-itch-io"></i></a>
-                <a href="/index.html" title="Portfólio"><i class="fas fa-home"></i></a>
+                <a href="/portfolio/index.html" title="Portfólio"><i class="fas fa-home"></i></a>
             </div>
         </div>
     </footer>
 
     <script>
-        // Simulação de cliques nos links
-        document.addEventListener('DOMContentLoaded', function() {
-            // Simular clique no botão de voltar
-        
+        document.addEventListener('DOMContentLoaded', function() {        
      
         });
     </script>

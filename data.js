@@ -49,7 +49,7 @@ const portfolioData = {
         {
             id: 3,
             title: "Child Of Warana",
-            description: "Precision 2D platformer with time-travel resets.",
+            description: "Precision 2D platformer with time-travel resets created in 3 Days for a Game Jam.",
             tech: "Godot", 
             duration: "3 Days",
             gif: "assets/child-of-warana/child-of-warana-01.gif",
