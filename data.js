@@ -1,5 +1,5 @@
 const portfolioData = {
-    // Informações pessoais
+    // Informações
     personalInfo: {
         name: "Ryan Mesquita",
         title: "Gameplay Programmer",
@@ -18,7 +18,7 @@ const portfolioData = {
         ]
     },
     
-    // Links sociais
+    // sociais
     socialLinks: {
         linkedin: "https://www.linkedin.com/in/ryan-damasceno-823285288/",
         github: "https://github.com/RMD663",

@@ -1,4 +1,3 @@
-// Função para inicializar o portfólio
 function initializePortfolio() {
     loadPersonalInfo();
     loadProjects();
@@ -6,7 +5,6 @@ function initializePortfolio() {
     setupCarousel();
 }
 
-// Carregar informações pessoais
 function loadPersonalInfo() {
     const data = portfolioData.personalInfo;
     const social = portfolioData.socialLinks;
@@ -15,7 +13,7 @@ function loadPersonalInfo() {
     document.getElementById('header-name').textContent = data.name;
     document.getElementById('header-title').textContent = data.title;
     
-    // Hero section
+    // Hero
     document.getElementById('hero-greeting').innerHTML = data.greeting;
     document.getElementById('profile-image').src = data.profileImage;
     document.getElementById('profile-image').alt = `Foto de ${data.name}`;
@@ -28,7 +26,7 @@ function loadPersonalInfo() {
         heroDesc.appendChild(p);
     });
     
-    // About section
+    // About 
     const aboutContent = document.getElementById('about-content');
     aboutContent.innerHTML = '';
     data.about.forEach(paragraph => {
@@ -37,7 +35,7 @@ function loadPersonalInfo() {
         aboutContent.appendChild(p);
     });
     
-    // Social links
+    // Social
     document.getElementById('linkedin-link').href = social.linkedin;
     document.getElementById('github-link').href = social.github;
     document.getElementById('itch-link').href = social.itch;
@@ -53,7 +51,6 @@ function loadPersonalInfo() {
     document.getElementById('footer-subtitle').textContent = "Gameplay Programmer & Systems Programmer";
 }
 
-// Carregar projetos
 function loadProjects() {
     const projectsContainer = document.getElementById('projects-container');
     const indicatorsContainer = document.getElementById('carousel-indicators');
@@ -62,7 +59,6 @@ function loadProjects() {
     indicatorsContainer.innerHTML = '';
     
     portfolioData.projects.forEach((project, index) => {
-        // Criar card do projeto
         const projectCard = document.createElement('div');
         projectCard.className = 'project-card';
         projectCard.setAttribute('data-project-id', project.id);
@@ -84,7 +80,6 @@ function loadProjects() {
             </div>
         `;
         
-        // Adicionar evento de clique
         projectCard.addEventListener('click', () => {
             if (project.articleUrl) {
                 window.open(project.articleUrl, '_blank');
@@ -93,7 +88,6 @@ function loadProjects() {
         
         projectsContainer.appendChild(projectCard);
         
-        // Criar indicador do carrossel
         const indicator = document.createElement('div');
         indicator.className = `indicator ${index === 0 ? 'active' : ''}`;
         indicator.setAttribute('data-index', index);
@@ -101,7 +95,6 @@ function loadProjects() {
     });
 }
 
-// Configurar carrossel
 function setupCarousel() {
     const carouselContainer = document.querySelector('.carousel-container');
     const projectCards = document.querySelectorAll('.project-card');
@@ -109,82 +102,91 @@ function setupCarousel() {
     const nextBtn = document.querySelector('.carousel-btn.next');
     const indicators = document.querySelectorAll('.indicator');
     
-    if (!portfolioData.settings.enableCarousel || projectCards.length === 0) {
-        // Se o carrossel estiver desativado, mostrar todos os projetos em grade
-        carouselContainer.style.flexWrap = 'wrap';
-        carouselContainer.style.justifyContent = 'center';
-        carouselContainer.style.transform = 'none';
-        document.querySelector('.carousel-btn.prev').style.display = 'none';
-        document.querySelector('.carousel-btn.next').style.display = 'none';
-        document.querySelector('.carousel-indicators').style.display = 'none';
-        return;
-    }
-    
     let currentIndex = 0;
     const cardCount = projectCards.length;
-    
-    // Calcular quantos cards mostrar por vez baseado na largura da tela
-    function getCardsPerView() {
-        if (window.innerWidth <= 768) return 1;
-        if (window.innerWidth <= 992) return 2;
-        return 3;
+    const gap = 30;
+
+    let isDragging = false;
+    let startPos = 0;
+    let currentTranslate = 0;
+    let prevTranslate = 0;
+    let animationID = 0;
+
+    carouselContainer.addEventListener('touchstart', touchStart);
+    carouselContainer.addEventListener('touchmove', touchMove);
+    carouselContainer.addEventListener('touchend', touchEnd);
+
+    function touchStart(event) {
+        isDragging = true;
+        startPos = event.touches[0].clientX;
+        
+        carouselContainer.style.transition = 'none';
+        
+        animationID = requestAnimationFrame(animation);
     }
-    
-    // Atualizar a posição do carrossel
+
+    function touchMove(event) {
+        if (!isDragging) return;
+        const currentPosition = event.touches[0].clientX;
+        const diff = currentPosition - startPos;
+        currentTranslate = prevTranslate + diff;
+    }
+
+    function touchEnd() {
+        isDragging = false;
+        cancelAnimationFrame(animationID);
+
+        const movedBy = currentTranslate - prevTranslate;
+
+        if (movedBy < -100 && currentIndex < cardCount - 1) currentIndex += 1;
+        if (movedBy > 100 && currentIndex > 0) currentIndex -= 1;
+
+        carouselContainer.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
+        updateCarousel();
+    }
+
+    function animation() {
+        if (isDragging) {
+            setSliderPosition();
+            requestAnimationFrame(animation);
+        }
+    }
+
+    function setSliderPosition() {
+        carouselContainer.style.transform = `translateX(${currentTranslate}px)`;
+    }
+
     function updateCarousel() {
-        const cardWidth = projectCards[0].offsetWidth + 30;
-        const translateX = -currentIndex * cardWidth;
-        carouselContainer.style.transform = `translateX(${translateX}px)`;
+        const cardWidth = projectCards[0].offsetWidth + gap;
+        currentTranslate = -currentIndex * cardWidth;
+        prevTranslate = currentTranslate;
+        setSliderPosition();
         
-
-        indicators.forEach((indicator, index) => {
-            indicator.classList.toggle('active', index === currentIndex);
+        indicators.forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentIndex);
         });
     }
-    
-    // Evento para o botão próximo
-    nextBtn.addEventListener('click', function() {
-        const cardsPerView = getCardsPerView();
-        currentIndex = (currentIndex + 1) % cardCount;
-        updateCarousel();
-    });
-    
-    // Evento para o botão anterior
-    prevBtn.addEventListener('click', function() {
-        const cardsPerView = getCardsPerView();
-        currentIndex = (currentIndex - 1 + cardCount) % cardCount;
-        updateCarousel();
-    });
-    
-    // Eventos para os indicadores
-    indicators.forEach(indicator => {
-        indicator.addEventListener('click', function() {
-            currentIndex = parseInt(this.getAttribute('data-index'));
+
+    nextBtn.addEventListener('click', () => {
+        if (currentIndex < cardCount - 1) {
+            currentIndex++;
+            carouselContainer.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
             updateCarousel();
-        });
+        }
     });
-    
-    // Atualizar carrossel ao redimensionar a janela
+
+    prevBtn.addEventListener('click', () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            carouselContainer.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            updateCarousel();
+        }
+    });
+
     window.addEventListener('resize', updateCarousel);
-    
-
     updateCarousel();
-    
-
-    projectCards.forEach(card => {
-        const gif = card.querySelector('.project-gif');
-        
-        card.addEventListener('mouseenter', function() {
-            gif.style.transition = 'filter 0.5s ease';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            gif.style.transition = 'filter 0.5s ease';
-        });
-    });
 }
 
-// Configurar event listeners
 function setupEventListeners() {
     document.querySelectorAll('.resume-btn, #footer-resume').forEach(btn => {
         btn.addEventListener('click', function(e) {
@@ -193,7 +195,6 @@ function setupEventListeners() {
         });
     });
     
-    // Prevenir comportamento padrão dos links sociais (exceto currículo)
     document.querySelectorAll('.social-links a:not(.resume-btn), .footer-social a:not(#footer-resume)').forEach(link => {
         link.addEventListener('click', function(e) {
             if (this.getAttribute('href') === '#') {
@@ -211,7 +212,7 @@ function setupEventListeners() {
 
 document.addEventListener('DOMContentLoaded', initializePortfolio);
 
-// Suporte para exportação de módulos
+// módulos
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { portfolioData, initializePortfolio };
 }
