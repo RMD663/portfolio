@@ -70,6 +70,6 @@ const portfolioData = {
     settings: {
         currentYear: new Date().getFullYear(),
         enableCarousel: true,
-        maxProjectsToShow: 5
+        maxProjectsToShow: 4
     }
 };

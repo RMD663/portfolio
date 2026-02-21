@@ -132,12 +132,11 @@ function setupCarousel() {
     
     // Atualizar a posição do carrossel
     function updateCarousel() {
-        const cardsPerView = getCardsPerView();
-        const cardWidth = projectCards[0].offsetWidth + 30; // Inclui gap
+        const cardWidth = projectCards[0].offsetWidth + 30;
         const translateX = -currentIndex * cardWidth;
         carouselContainer.style.transform = `translateX(${translateX}px)`;
         
-        // Atualizar indicadores
+
         indicators.forEach((indicator, index) => {
             indicator.classList.toggle('active', index === currentIndex);
         });
@@ -146,14 +145,14 @@ function setupCarousel() {
     // Evento para o botão próximo
     nextBtn.addEventListener('click', function() {
         const cardsPerView = getCardsPerView();
-        currentIndex = (currentIndex + 1) % (cardCount - cardsPerView + 1);
+        currentIndex = (currentIndex + 1) % cardCount;
         updateCarousel();
     });
     
     // Evento para o botão anterior
     prevBtn.addEventListener('click', function() {
         const cardsPerView = getCardsPerView();
-        currentIndex = (currentIndex - 1 + (cardCount - cardsPerView + 1)) % (cardCount - cardsPerView + 1);
+        currentIndex = (currentIndex - 1 + cardCount) % cardCount;
         updateCarousel();
     });
     
@@ -168,10 +167,10 @@ function setupCarousel() {
     // Atualizar carrossel ao redimensionar a janela
     window.addEventListener('resize', updateCarousel);
     
-    // Inicializar o carrossel
+
     updateCarousel();
     
-    // Efeito de hover nos cards (dessaturação/saturação)
+
     projectCards.forEach(card => {
         const gif = card.querySelector('.project-gif');
         
@@ -187,7 +186,6 @@ function setupCarousel() {
 
 // Configurar event listeners
 function setupEventListeners() {
-    // Simular clique no currículo
     document.querySelectorAll('.resume-btn, #footer-resume').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
@@ -198,8 +196,6 @@ function setupEventListeners() {
     // Prevenir comportamento padrão dos links sociais (exceto currículo)
     document.querySelectorAll('.social-links a:not(.resume-btn), .footer-social a:not(#footer-resume)').forEach(link => {
         link.addEventListener('click', function(e) {
-            // Em um site real, os links já estão configurados para abrir as páginas corretas
-            // Esta função só está aqui para evitar que a página recarregue se os links forem "#"
             if (this.getAttribute('href') === '#') {
                 e.preventDefault();
                 const platform = this.querySelector('i').className.split(' ')[1];
@@ -213,10 +209,9 @@ function setupEventListeners() {
     });
 }
 
-// Inicializar quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', initializePortfolio);
 
-// Suporte para exportação de módulos (se necessário)
+// Suporte para exportação de módulos
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { portfolioData, initializePortfolio };
 }
