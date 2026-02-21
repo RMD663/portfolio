@@ -179,9 +179,11 @@ section {
 
 .carousel-container {
     display: flex;
-    transition: transform 0.5s ease;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     gap: 30px;
     padding: 10px;
+    touch-action: pan-y; 
+    user-select: none;   
 }
 
 .project-card {
